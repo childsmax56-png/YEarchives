@@ -516,13 +516,72 @@
   ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 
   @media (max-width: 700px) {
-    header { padding: 1rem; }
-    h1 { font-size: 1.5rem; }
+    header { padding: 1rem 1rem 0.75rem; }
+    h1 { font-size: 1.4rem; }
+    .header-top { margin-bottom: 0.75rem; gap: 0.5rem; }
+    #stats { font-size: 10px; }
     .filters { gap: 0.5rem; }
-    colgroup col:nth-child(1) { width: 120px; }
-    colgroup col:nth-child(3),
-    colgroup col:nth-child(4),
-    colgroup col:nth-child(6) { display: none; }
+    .search-wrap { max-width: 100%; }
+    .filter-group { gap: 0.4rem; }
+    .pill { padding: 4px 9px; font-size: 10px; }
+    .filter-label { font-size: 9px; }
+
+    /* Hide table entirely on mobile */
+    .table-wrap table { display: none; }
+
+    /* Card layout */
+    .card-list { display: block; }
+    .track-card {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px 10px;
+      transition: background 0.1s;
+    }
+    .track-card:hover { background: #141414; }
+    .card-name {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.4;
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .card-era {
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      grid-column: 1;
+      grid-row: 2;
+      margin-top: 2px;
+    }
+    .card-actions {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      justify-content: center;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      grid-column: 1;
+      grid-row: 3;
+      margin-top: 5px;
+    }
+    .card-len {
+      font-size: 10px;
+      color: var(--text-dim);
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  @media (min-width: 701px) {
+    .card-list { display: none; }
   }
 </style>
 </head>
@@ -592,6 +651,7 @@
       <span>🔍</span>No tracks match your search.
     </div>
   </div>
+  <div class="card-list" id="card-list"></div>
   <div class="pagination" id="pagination"></div>
 </main>
 
@@ -806,10 +866,11 @@ function render() {
   document.getElementById('stat-total').textContent = TRACKS.length.toLocaleString();
   if (filtered.length === 0) {
     tbody.innerHTML = '';
+    document.getElementById('card-list').innerHTML = '';
     empty.style.display = '';
   } else {
     empty.style.display = 'none';
-    tbody.innerHTML = slice.map(t => {
+    const rows = slice.map(t => {
       const era = ERAS[t[0]] || '';
       const name = t[1] || '';
       const len = t[2] || '';
@@ -828,17 +889,34 @@ function render() {
       const notesBtn = notes
         ? `<button class="notes-btn" onclick="openModal('${safeName}','${safeEra}','${safeNotes}','${len}','${leaked}')">info</button>`
         : `<button class="notes-btn no-notes">info</button>`;
-      return `<tr>
-        <td class="era-cell" title="${era}">${era}</td>
-        <td class="name-cell">${name}</td>
-        <td class="len-cell">${len || '—'}</td>
-        <td class="date-cell">${leaked || '—'}</td>
-        <td>${getBadge(avail)}</td>
-        <td>${getQualityDot(quality)}</td>
-        <td>${notesBtn}</td>
-        <td>${linkCell}</td>
-      </tr>`;
-    }).join('');
+      return { era, name, len, leaked, avail, quality, link, linkLabel, linkCell, notesBtn };
+    });
+
+    tbody.innerHTML = rows.map(r => `<tr>
+      <td class="era-cell" title="${r.era}">${r.era}</td>
+      <td class="name-cell">${r.name}</td>
+      <td class="len-cell">${r.len || '—'}</td>
+      <td class="date-cell">${r.leaked || '—'}</td>
+      <td>${getBadge(r.avail)}</td>
+      <td>${getQualityDot(r.quality)}</td>
+      <td>${r.notesBtn}</td>
+      <td>${r.linkCell}</td>
+    </tr>`).join('');
+
+    document.getElementById('card-list').innerHTML = rows.map(r => `
+      <div class="track-card">
+        <div class="card-name">${r.name}</div>
+        <div class="card-era">${r.era}</div>
+        <div class="card-meta">
+          ${getBadge(r.avail)}
+          ${getQualityDot(r.quality)}
+          ${r.len ? `<span class="card-len">${r.len}</span>` : ''}
+        </div>
+        <div class="card-actions">
+          ${r.linkCell}
+          ${r.notesBtn}
+        </div>
+      </div>`).join('');
   }
   renderPagination();
 }
