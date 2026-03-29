@@ -883,11 +883,13 @@ function render() {
       const linkCell = link
         ? `<a href="${link}" target="_blank" rel="noopener" class="link-btn">${linkLabel}</a>`
         : `<span class="no-link">—</span>`;
-      const safeNotes = notes.replace(/'/g, "\\'").replace(/\n/g, ' ');
-      const safeName = name.replace(/'/g, "\\'");
-      const safeEra = era.replace(/'/g, "\\'");
+      const safeNotes = encodeURIComponent(notes);
+      const safeName = encodeURIComponent(name);
+      const safeEra = encodeURIComponent(era);
+      const safeLen = encodeURIComponent(len);
+      const safeLeaked = encodeURIComponent(leaked);
       const notesBtn = notes
-        ? `<button class="notes-btn" onclick="openModal('${safeName}','${safeEra}','${safeNotes}','${len}','${leaked}')">info</button>`
+        ? `<button class="notes-btn" data-name="${safeName}" data-era="${safeEra}" data-notes="${safeNotes}" data-len="${safeLen}" data-leaked="${safeLeaked}">info</button>`
         : `<button class="notes-btn no-notes">info</button>`;
       return { era, name, len, leaked, avail, quality, link, linkLabel, linkCell, notesBtn };
     });
@@ -973,7 +975,19 @@ document.querySelectorAll('thead th[data-col]').forEach(th => {
   });
 });
 
-// Modal
+// Modal - event delegation handles any special characters safely
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.notes-btn:not(.no-notes)');
+  if (!btn) return;
+  openModal(
+    decodeURIComponent(btn.dataset.name || ''),
+    decodeURIComponent(btn.dataset.era || ''),
+    decodeURIComponent(btn.dataset.notes || ''),
+    decodeURIComponent(btn.dataset.len || ''),
+    decodeURIComponent(btn.dataset.leaked || '')
+  );
+});
+
 function openModal(name, era, notes, len, leaked) {
   document.getElementById('modal-title').textContent = name;
   document.getElementById('modal-era').textContent = era;
