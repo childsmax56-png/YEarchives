@@ -140,7 +140,11 @@
     text-transform: uppercase;
   }
   .pill:hover { border-color: var(--gold-dim); color: var(--gold); }
-  .pill.active { font-weight: 500; }
+  .pill.active { font-weight: 500; background: rgba(201,168,76,0.12); border-color: var(--gold-dim); color: var(--gold); }
+  .pill-lossless.active { background: rgba(100,200,100,0.2); border-color: #6cc86c; color: #6cc86c; }
+  .pill-cd.active { background: rgba(76,139,201,0.2); border-color: var(--blue); color: #6ea2d9; }
+  .pill-hq.active { background: rgba(201,168,76,0.2); border-color: var(--gold); color: var(--gold); }
+  .pill-notavail.active { background: rgba(201,76,76,0.2); border-color: var(--red); color: #d97a7a; }
   .pill-na.active { background: rgba(150,150,150,0.2); border-color: #777; color: #aaa; }
   .pill-full.active { background: rgba(76,175,80,0.2); border-color: var(--green); color: #6ec972; }
   .pill-partial.active { background: rgba(76,139,201,0.2); border-color: var(--blue); color: #6ea2d9; }
@@ -740,10 +744,10 @@
     </div>
     <div class="filter-group" id="ac-quality-filters">
       <span class="filter-label">Quality:</span>
-      <button class="pill" data-acquality="Lossless">Lossless</button>
-      <button class="pill" data-acquality="CD Quality">CD Quality</button>
-      <button class="pill" data-acquality="High Quality">High Quality</button>
-      <button class="pill" data-acquality="Not Available">N/A</button>
+      <button class="pill pill-lossless" data-acquality="Lossless">Lossless</button>
+      <button class="pill pill-cd" data-acquality="CD Quality">CD Quality</button>
+      <button class="pill pill-hq" data-acquality="High Quality">High Quality</button>
+      <button class="pill pill-notavail" data-acquality="Not Available">N/A</button>
     </div>
   </div>
 </header>
