@@ -711,6 +711,9 @@
       <button class="pill pill-stream" id="r-stream-yes">✓ On DSPs</button>
       <button class="pill pill-stream" id="r-stream-no">✗ Not on DSPs</button>
     </div>
+    <div class="filter-group">
+      <button class="pill pill-ai" id="r-ai-filter-btn">🤖 AI</button>
+    </div>
   </div>
   <div class="filters" id="ac-filters" style="display:none">
     <div class="search-wrap">
@@ -1333,6 +1336,7 @@ let rSearchVal = '';
 let rSelectedEras = new Set();
 let rSelectedTypes = new Set();
 let rStreamFilter = ''; // '', 'Yes', 'No'
+let rAiOnly = false;
 
 // Released era dropdown
 const rEraBtn = document.getElementById('r-era-dropdown-btn');
@@ -1428,6 +1432,12 @@ document.getElementById('r-search').addEventListener('input', e => {
   rApplyFilters();
 });
 
+document.getElementById('r-ai-filter-btn').addEventListener('click', function() {
+  rAiOnly = !rAiOnly;
+  this.classList.toggle('active', rAiOnly);
+  rApplyFilters();
+});
+
 function getRTypeBadge(typ) {
   const map = {
     'Album Track': ['badge-album','Album'],
@@ -1445,7 +1455,7 @@ function rApplyFilters() {
   rFiltered = R_TRACKS.filter(t => {
     if (rSelectedEras.size > 0 && !rSelectedEras.has(t[0])) return false;
     if (sq && !t[1].toLowerCase().includes(sq)) return false;
-    if (rSelectedEras.size > 0 && !rSelectedEras.has(t[0])) return false;
+    if (rAiOnly && !t[1].includes('🤖')) return false;
     if (rSelectedTypes.size > 0 && !rSelectedTypes.has(t[4])) return false;
     if (rStreamFilter && t[5] !== rStreamFilter) return false;
     return true;
