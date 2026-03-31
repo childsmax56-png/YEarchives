@@ -638,7 +638,7 @@
       <h1>YE ARCHIVE</h1>
       <div class="subtitle">Track Tracker</div>
     </div>
-    <div id="stats">Showing <span id="stat-showing">–</span> of <span id="stat-total">–</span> tracks</div>
+    <div id="stats">Showing <span id="stat-showing">–</span> of <span id="stat-total">–</span> <span id="stat-label">tracks</span></div>
   </div>
   <div class="tabs">
     <button class="tab-btn active" data-tab="unreleased">Unreleased</button>
@@ -1164,6 +1164,7 @@ function render() {
   const empty = document.getElementById('empty');
   document.getElementById('stat-showing').textContent = filtered.length.toLocaleString();
   document.getElementById('stat-total').textContent = TRACKS.length.toLocaleString();
+  document.getElementById('stat-label').textContent = 'tracks';
   if (filtered.length === 0) {
     tbody.innerHTML = '';
     document.getElementById('card-list').innerHTML = '';
@@ -1472,6 +1473,7 @@ function rRender() {
 
   document.getElementById('stat-showing').textContent = rFiltered.length.toLocaleString();
   document.getElementById('stat-total').textContent = R_TRACKS.length.toLocaleString();
+  document.getElementById('stat-label').textContent = 'tracks';
 
   if (rFiltered.length === 0) {
     tbody.innerHTML = '';
@@ -1715,6 +1717,7 @@ function acRender() {
 
   document.getElementById('stat-showing').textContent = acFiltered.length.toLocaleString();
   document.getElementById('stat-total').textContent = AC_TRACKS.length.toLocaleString();
+  document.getElementById('stat-label').textContent = 'album copies';
 
   if (acFiltered.length === 0) {
     tbody.innerHTML = '';
