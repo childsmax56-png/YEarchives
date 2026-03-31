@@ -1194,7 +1194,7 @@ function render() {
       <td class="era-cell" title="${r.era}">${r.era}</td>
       <td class="name-cell">${r.name}</td>
       <td class="len-cell">${r.len || '—'}</td>
-      <td class="date-cell">${r.leaked || '—'}</td>
+      <td class="date-cell">${formatDate(r.leaked) || '—'}</td>
       <td>${getBadge(r.avail)}</td>
       <td>${getQualityDot(r.quality)}</td>
       <td>${r.notesBtn}</td>
@@ -1306,7 +1306,7 @@ function openModal(name, era, notes, len, leaked) {
   document.getElementById('modal-notes').textContent = notes;
   let meta = '';
   if (len) meta += `Length: <span>${len}</span>&nbsp;&nbsp;`;
-  if (leaked) meta += `Leaked: <span>${leaked}</span>`;
+  if (leaked) meta += `Leaked: <span>${formatDate(leaked)}</span>`;
   document.getElementById('modal-meta').innerHTML = meta;
   document.getElementById('modal-overlay').classList.add('open');
 }
@@ -1493,7 +1493,7 @@ function rRender() {
       <td class="era-cell" title="${r.era}">${r.era}</td>
       <td class="name-cell">${r.name}</td>
       <td class="len-cell">${r.len || '—'}</td>
-      <td class="date-cell">${r.date || '—'}</td>
+      <td class="date-cell">${formatDate(r.date) || '—'}</td>
       <td>${getRTypeBadge(r.typ)}</td>
       <td>${r.streamCell}</td>
       <td>${r.notesBtn}</td>
@@ -1732,7 +1732,7 @@ function acRender() {
       <td class="era-cell" title="${r.era}">${r.era}</td>
       <td class="name-cell">${r.name}</td>
       <td class="len-cell">${r.copyLen || '—'}</td>
-      <td class="date-cell">${r.fileDate || '—'}</td>
+      <td class="date-cell">${formatDate(r.fileDate) || '—'}</td>
       <td>${getACAvailBadge(r.avail)}</td>
       <td>${getACQualityBadge(r.quality)}</td>
       <td>${r.notesBtn}</td>
@@ -1786,6 +1786,40 @@ function acGoPage(p) {
   acPage = p;
   acRender();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+// ============================================================
+// DATE FORMATTING  (DD/MM/YY)
+// ============================================================
+function formatDate(str) {
+  if (!str) return '';
+  const MONTHS = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
+  const s = str.trim();
+  const suffix = s.match(/[?*+~]$/) ? s.slice(-1) : '';
+  const base = suffix ? s.slice(0, -1).trim() : s;
+
+  // "Month Day, Year"  e.g. "Apr 22, 2009"
+  const full = base.match(/^([A-Za-z]{3})[\s.]+(\d{1,2}),?\s*(\d{4})$/);
+  if (full) {
+    const m = String(MONTHS[full[1]] || 0).padStart(2,'0');
+    const d = String(parseInt(full[2])).padStart(2,'0');
+    const y = full[3].slice(2);
+    return `${d}/${m}/${y}${suffix}`;
+  }
+
+  // "Month Year"  e.g. "Sep 1997"
+  const my = base.match(/^([A-Za-z]{3})\s+(\d{4})$/);
+  if (my) {
+    const m = String(MONTHS[my[1]] || 0).padStart(2,'0');
+    const y = my[2].slice(2);
+    return `${m}/${y}${suffix}`;
+  }
+
+  // "Year" only  e.g. "2001"
+  if (/^\d{4}$/.test(base)) return base + suffix;
+
+  return str; // unknown format — leave as-is
 }
 
 // ============================================================
