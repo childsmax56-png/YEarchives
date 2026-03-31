@@ -1083,6 +1083,7 @@ function applyFilters() {
   filtered = TRACKS.filter(t => {
     if (sq && !t[1].toLowerCase().includes(sq)) return false;
     if (aiOnly && !t[1].includes('🤖')) return false;
+    if (selectedEras.size > 0 && !selectedEras.has(t[0])) return false;
     if (selectedAvail.size > 0) {
       const avail = t[4] || '';
       // "Confirmed" pill covers both Confirmed and empty (truly unavailable)
@@ -1442,6 +1443,7 @@ function getRTypeBadge(typ) {
 function rApplyFilters() {
   const sq = rSearchVal.toLowerCase();
   rFiltered = R_TRACKS.filter(t => {
+    if (rSelectedEras.size > 0 && !rSelectedEras.has(t[0])) return false;
     if (sq && !t[1].toLowerCase().includes(sq)) return false;
     if (rSelectedEras.size > 0 && !rSelectedEras.has(t[0])) return false;
     if (rSelectedTypes.size > 0 && !rSelectedTypes.has(t[4])) return false;
@@ -1656,6 +1658,7 @@ document.querySelectorAll('[data-acquality]').forEach(btn => {
 
 function acApplyFilters() {
   acFiltered = AC_TRACKS.filter(t => {
+    if (acSelectedEras.size > 0 && !acSelectedEras.has(t[0])) return false;
     if (acSearchVal) {
       const n = (t[1] || '').toLowerCase();
       const e = (AC_ERAS[t[0]] || '').toLowerCase();
