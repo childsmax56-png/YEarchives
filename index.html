@@ -3006,7 +3006,7 @@ function covRender() {
           <div class="cover-btns">
             ${link ? `<a href="${link}" target="_blank" rel="noopener" class="cover-link-btn" onclick="event.stopPropagation()">View ↗</a>` : ''}
             <button class="cover-link-btn" onclick="downloadCoverImg('${r2Url}','${name.replace(/'/g, "\\'")}','${safeLink}',event)">Download ↓</button>
-          </div>`
+          </div>
         </div>
       </div>`;
     }).join('');
