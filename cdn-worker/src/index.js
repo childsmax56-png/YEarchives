@@ -9,19 +9,21 @@ export default {
       return new Response('Not found', { status: 404 });
     }
 
-    // Try to get the object from R2
-    const object = await env.COVERS.get(key);
+    // Try the key as-is first, then common image extensions
+    const candidates = [key, `${key}.jpg`, `${key}.jpeg`, `${key}.png`, `${key}.webp`];
 
-    if (!object) {
-      return new Response('Not found', { status: 404 });
+    for (const candidate of candidates) {
+      const object = await env.COVERS.get(candidate);
+      if (object) {
+        const headers = new Headers();
+        object.writeHttpMetadata(headers);
+        headers.set('etag', object.httpEtag);
+        headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+        headers.set('Access-Control-Allow-Origin', '*');
+        return new Response(object.body, { headers });
+      }
     }
 
-    const headers = new Headers();
-    object.writeHttpMetadata(headers);
-    headers.set('etag', object.httpEtag);
-    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-    headers.set('Access-Control-Allow-Origin', '*');
-
-    return new Response(object.body, { headers });
+    return new Response('Not found', { status: 404 });
   }
 };
