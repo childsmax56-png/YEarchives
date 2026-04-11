@@ -2934,6 +2934,13 @@ function covApplyFilters() {
   covRender();
 }
 
+function covImgErr(img, fallback) {
+  img.onerror = function() {
+    img.parentElement.innerHTML = '<div class="cover-placeholder"><span>Click link to view</span></div>';
+  };
+  img.src = fallback;
+}
+
 function covRender() {
   const start = covPage * COV_PAGE_SIZE;
   const slice = covFiltered.slice(start, start + COV_PAGE_SIZE);
@@ -2952,9 +2959,14 @@ function covRender() {
       const era = COV_ERAS[e[0]] || '';
       const name = e[1]; const notes = e[2]; const designer = e[3];
       const artType = e[4]; const projType = e[5]; const use = e[6]; const link = e[7];
-      const imgHtml = link
-        ? `<img src="${link}" alt="${name.replace(/"/g,'')}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=cover-placeholder><span>Click link to view</span></div>'">`
-        : `<div class="cover-placeholder"><span>No Image Available</span></div>`;
+      const r2Base = 'https://yzyarchivescovers-cdn.childsmax56-png.workers.dev';
+      const r2Url = r2Base + '/' + encodeURIComponent(era) + '/' + encodeURIComponent(name);
+      const safeAlt = name.replace(/"/g, '');
+      const safeLink = link.replace(/'/g, '%27');
+      const onErr = link
+        ? `covImgErr(this,'${safeLink}')`
+        : `this.parentElement.innerHTML='<div class=cover-placeholder><span>No Image Available</span></div>'`;
+      const imgHtml = `<img src="${r2Url}" alt="${safeAlt}" loading="lazy" onerror="${onErr}">`;
       const useColors = {Used:'pill-full',Alternate:'pill-partial',Unused:'pill-na','Concept Art':'pill-snippet'};
       const useCls = useColors[use] || '';
       const fullNotes = [notes, designer ? 'Designer: ' + designer : ''].filter(Boolean).join('\n');
