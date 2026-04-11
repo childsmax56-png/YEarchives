@@ -507,6 +507,8 @@
     transition: background 0.15s;
   }
   .cover-link-btn:hover { background: rgba(201,168,76,0.1); }
+  .cover-btns { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+  .cover-btns .cover-link-btn { margin-top: 0; cursor: pointer; background: none; }
   .cover-badge {
     font-size: 9px;
     padding: 1px 5px;
@@ -2936,9 +2938,30 @@ function covApplyFilters() {
 
 function covImgErr(img, fallback) {
   img.onerror = function() {
-    img.parentElement.innerHTML = '<div class="cover-placeholder"><span>Click link to view</span></div>';
+    img.parentElement.innerHTML = '<div class="cover-placeholder"><span>Click link to view/download</span></div>';
   };
   img.src = fallback;
+}
+
+function downloadCoverImg(r2Url, name, fallbackLink, event) {
+  event.stopPropagation();
+  const filename = name.replace(/[/\\?%*:|"<>]/g, '-') + '.jpg';
+  fetch(r2Url)
+    .then(res => {
+      if (!res.ok) throw new Error('R2 fetch failed');
+      return res.blob();
+    })
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    })
+    .catch(() => {
+      if (fallbackLink) window.open(fallbackLink, '_blank');
+    });
 }
 
 function covRender() {
@@ -2980,7 +3003,10 @@ function covRender() {
             ${use ? `<span class="cover-badge badge ${useCls}" style="font-size:9px;padding:1px 5px">${use}</span>` : ''}
             ${artType ? `<span class="cover-badge">${artType}</span>` : ''}
           </div>
-          ${link ? `<a href="${link}" target="_blank" rel="noopener" class="cover-link-btn" onclick="event.stopPropagation()">View Image ↗</a>` : ''}
+          <div class="cover-btns">
+            ${link ? `<a href="${link}" target="_blank" rel="noopener" class="cover-link-btn" onclick="event.stopPropagation()">View ↗</a>` : ''}
+            <button class="cover-link-btn" onclick="downloadCoverImg('${r2Url}','${name.replace(/'/g, "\\'")}','${safeLink}',event)">Download ↓</button>
+          </div>`
         </div>
       </div>`;
     }).join('');
