@@ -2938,7 +2938,8 @@ function covRender() {
         : `<div class="cover-placeholder">🖼</div>`;
       const useColors = {Used:'pill-full',Alternate:'pill-partial',Unused:'pill-na','Concept Art':'pill-snippet'};
       const useCls = useColors[use] || '';
-      return `<div class="cover-card" onclick="openModal(${JSON.stringify(name)},${JSON.stringify(era)},decodeURIComponent('${encodedNotes}')+'\n'+decodeURIComponent('${encodedDesigner}'),'','')" >
+      const fullNotes = [notes, designer ? 'Designer: ' + designer : ''].filter(Boolean).join('\n');
+      return `<div class="cover-card" data-name="${encodeURIComponent(name)}" data-era="${encodeURIComponent(era)}" data-notes="${encodeURIComponent(fullNotes)}">
         <div class="cover-img-wrap">${imgHtml}</div>
         <div class="cover-info">
           <div class="cover-name" title="${name}">${name}</div>
