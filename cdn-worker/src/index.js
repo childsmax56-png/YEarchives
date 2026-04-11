@@ -2,6 +2,15 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // Debug endpoint — lists first 20 objects in the bucket
+    if (url.pathname === '/debug-list') {
+      const listed = await env.COVERS.list({ limit: 20 });
+      const keys = listed.objects.map(o => o.key);
+      return new Response(JSON.stringify(keys, null, 2), {
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+      });
+    }
+
     // Strip leading slash and decode the path
     const key = decodeURIComponent(url.pathname.slice(1));
 
@@ -24,6 +33,6 @@ export default {
       }
     }
 
-    return new Response('Not found', { status: 404 });
+    return new Response(`Not found: ${key}`, { status: 404 });
   }
 };
