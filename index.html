@@ -460,8 +460,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--border2);
-    font-size: 2rem;
+    color: var(--text-dim);
+    font-size: 10px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 1rem;
   }
   .cover-info {
     padding: 8px 10px;
@@ -2948,8 +2953,8 @@ function covRender() {
       const name = e[1]; const notes = e[2]; const designer = e[3];
       const artType = e[4]; const projType = e[5]; const use = e[6]; const link = e[7];
       const imgHtml = link
-        ? `<img src="${link}" alt="${name.replace(/"/g,'')}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=cover-placeholder>🖼</div>'">`
-        : `<div class="cover-placeholder">🖼</div>`;
+        ? `<img src="${link}" alt="${name.replace(/"/g,'')}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=cover-placeholder><span>Click link to view</span></div>'">`
+        : `<div class="cover-placeholder"><span>No Image Available</span></div>`;
       const useColors = {Used:'pill-full',Alternate:'pill-partial',Unused:'pill-na','Concept Art':'pill-snippet'};
       const useCls = useColors[use] || '';
       const fullNotes = [notes, designer ? 'Designer: ' + designer : ''].filter(Boolean).join('\n');
