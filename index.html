@@ -7,6 +7,41 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* Loading screen */
+  #loading-screen {
+    position: fixed;
+    inset: 0;
+    background: #0a0a0a;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    transition: opacity 0.7s ease;
+  }
+  #loading-screen.fade-out { opacity: 0; pointer-events: none; }
+  #loading-cd {
+    width: 260px;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 50%;
+    animation: cd-spin 2.8s linear infinite;
+    box-shadow: 0 0 60px rgba(201,168,76,0.15);
+  }
+  @keyframes cd-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  #loading-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    color: #555;
+    text-transform: uppercase;
+  }
+
   :root {
     --bg: #0a0a0a;
     --surface: #111;
@@ -731,6 +766,11 @@
 </style>
 </head>
 <body>
+
+<div id="loading-screen">
+  <img id="loading-cd" src="/yeezus.jpg" alt="">
+  <span id="loading-label">YE ARCHIVE</span>
+</div>
 
 <header>
   <div class="header-top">
@@ -3137,6 +3177,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // Init
 applyFilters();
+
+// Loading screen — dismiss once page is fully loaded
+window.addEventListener('load', function() {
+  const ls = document.getElementById('loading-screen');
+  ls.classList.add('fade-out');
+  setTimeout(function() { ls.remove(); }, 700);
+});
 </script>
 </body>
 </html>
