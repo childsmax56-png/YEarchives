@@ -191,6 +191,9 @@ today = datetime.now(timezone.utc).strftime('%b %d, %Y')
 msg = f"Add new tracks from Google Sheet ({today})\n\n{added_rec} tracks added to Recent, {added_raw} to Unreleased."
 
 subprocess.run(['git', 'add', 'index.html'], check=True)
-subprocess.run(['git', 'commit', '-m', msg], check=True)
+result = subprocess.run(['git', 'commit', '-m', msg])
+if result.returncode != 0:
+    print("Nothing to commit or commit failed — skipping push.")
+    sys.exit(0)
 subprocess.run(['git', 'push', 'origin', 'main'], check=True)
 print("Pushed to main.")

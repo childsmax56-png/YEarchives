@@ -21,14 +21,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Run update script
-        run: python3 update_from_sheets.py
-
-      - name: Push changes (if any)
+      - name: Configure git
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # update_from_sheets.py already commits & pushes when there are changes
-          # This step is a no-op if the script exited early with nothing to add
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run update script
+        run: python3 update_from_sheets.py
