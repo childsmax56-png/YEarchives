@@ -1,0 +1,34 @@
+name: Update tracker from Google Sheet
+
+on:
+  schedule:
+    # Runs every day at 08:00 UTC
+    - cron: '0 8 * * *'
+  workflow_dispatch:  # allows manual trigger from GitHub Actions tab
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run update script
+        run: python3 update_from_sheets.py
+
+      - name: Push changes (if any)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # update_from_sheets.py already commits & pushes when there are changes
+          # This step is a no-op if the script exited early with nothing to add
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
